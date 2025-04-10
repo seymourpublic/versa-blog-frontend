@@ -24,6 +24,10 @@ const styles = {
   container: {
     fontFamily: 'Arial, sans-serif',
     color: '#333',
+    backgroundColor: '#f7f7f7',
+    minHeight: '100vh',
+    display: 'flex',
+    flexDirection: 'column',
   },
   header: {
     background: '#0070f3',
@@ -34,12 +38,12 @@ const styles = {
     color: '#fff',
   },
   logo: {
-    fontSize: '1.5rem',
+    fontSize: '1.8rem',
     fontWeight: 'bold',
   },
   nav: {
     display: 'flex',
-    gap: '1rem',
+    gap: '1.5rem',
   },
   navLink: {
     color: '#fff',
@@ -47,15 +51,15 @@ const styles = {
     fontSize: '1rem',
   },
   main: {
+    flex: 1,
     maxWidth: '1200px',
-    margin: '2rem auto',
+    margin: '0 auto',
     padding: '0 1rem',
   },
   footer: {
-    background: '#f0f0f0',
+    background: '#eaeaea',
     textAlign: 'center',
     padding: '1rem',
-    marginTop: '2rem',
     fontSize: '0.9rem',
   },
 };
