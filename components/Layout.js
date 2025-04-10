@@ -1,0 +1,61 @@
+// components/Layout.js
+import Link from 'next/link';
+
+export default function Layout({ children }) {
+  return (
+    <div style={styles.container}>
+      <header style={styles.header}>
+        <div style={styles.logo}>VersaBlog</div>
+        <nav style={styles.nav}>
+          <Link href="/" style={styles.navLink}>Home</Link>
+          <Link href="/about" style={styles.navLink}>About</Link>
+          <Link href="/contact" style={styles.navLink}>Contact</Link>
+        </nav>
+      </header>
+      <main style={styles.main}>{children}</main>
+      <footer style={styles.footer}>
+        &copy; {new Date().getFullYear()} VersaBlog. All rights reserved.
+      </footer>
+    </div>
+  );
+}
+
+const styles = {
+  container: {
+    fontFamily: 'Arial, sans-serif',
+    color: '#333',
+  },
+  header: {
+    background: '#0070f3',
+    padding: '1rem 2rem',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    color: '#fff',
+  },
+  logo: {
+    fontSize: '1.5rem',
+    fontWeight: 'bold',
+  },
+  nav: {
+    display: 'flex',
+    gap: '1rem',
+  },
+  navLink: {
+    color: '#fff',
+    textDecoration: 'none',
+    fontSize: '1rem',
+  },
+  main: {
+    maxWidth: '1200px',
+    margin: '2rem auto',
+    padding: '0 1rem',
+  },
+  footer: {
+    background: '#f0f0f0',
+    textAlign: 'center',
+    padding: '1rem',
+    marginTop: '2rem',
+    fontSize: '0.9rem',
+  },
+};
