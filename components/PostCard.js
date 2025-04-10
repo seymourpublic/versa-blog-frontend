@@ -2,25 +2,21 @@
 import Link from 'next/link';
 
 export default function PostCard({ post }) {
+  // fallback if there's no image
+  const imageUrl = post.imageUrl || 'https://via.placeholder.com/400x200?text=No+Image';
+  
   return (
     <div style={styles.card}>
-      {post.imageUrl && (
-        <img src={post.imageUrl} alt={post.title} style={styles.image} />
-      )}
-      <div style={styles.content}>
-        <h2 style={styles.title}>
-          <Link href={`/posts/${post.id}`} style={styles.link}>
-            {post.title}
-          </Link>
-        </h2>
-        <p style={styles.date}>
-          {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : ""}
+      <img src={imageUrl} alt={post.title} style={styles.image} />
+      <div style={styles.body}>
+        <h2 style={styles.title}>{post.title}</h2>
+        <p style={styles.text}>
+          {post.content && post.content.length > 120
+            ? post.content.substring(0, 120) + '...'
+            : post.content}
         </p>
-        <p style={styles.excerpt}>
-          {post.content.substring(0, 150)}...
-        </p>
-        <Link href={`/posts/${post.id}`} style={styles.readMore}>
-          Read more →
+        <Link href={`/posts/${post.id}`}>
+          <button style={styles.readMore}>Read More</button>
         </Link>
       </div>
     </div>
@@ -31,10 +27,9 @@ const styles = {
   card: {
     display: 'flex',
     flexDirection: 'column',
-    background: '#fff',
+    backgroundColor: '#fff',
     borderRadius: '8px',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-    marginBottom: '2rem',
+    boxShadow: '0 1px 5px rgba(0,0,0,0.15)',
     overflow: 'hidden',
   },
   image: {
@@ -42,30 +37,26 @@ const styles = {
     height: '200px',
     objectFit: 'cover',
   },
-  content: {
+  body: {
     padding: '1rem',
   },
   title: {
-    fontSize: '1.8rem',
-    margin: '0 0 0.5rem 0',
+    fontSize: '1.25rem',
+    margin: '0 0 0.5rem',
+    color: '#333',
   },
-  date: {
-    fontSize: '0.9rem',
-    color: '#777',
-    marginBottom: '0.75rem',
-  },
-  excerpt: {
+  text: {
     fontSize: '1rem',
     lineHeight: '1.5',
-    marginBottom: '1rem',
-  },
-  link: {
-    textDecoration: 'none',
-    color: '#0070f3',
+    color: '#444',
+    margin: '0 0 1rem',
   },
   readMore: {
-    textDecoration: 'none',
-    fontWeight: 'bold',
-    color: '#0070f3',
+    backgroundColor: '#f6f6f6',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    padding: '0.5rem 1rem',
+    fontSize: '1rem',
+    cursor: 'pointer',
   },
 };
