@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export default function PostCard({ post }) {
   // Use a placeholder if there’s no image
-  const imageUrl = post.imageUrl || 'https://via.placeholder.com/400x200?text=No+Image';
+  const imageUrl = post.imageUrl || '/placeholder.jpg';
   
   return (
     <div style={styles.card}>

@@ -8,6 +8,9 @@ export default function Layout({ children }) {
         <div style={styles.logo}>VersaBlog</div>
         <nav style={styles.nav}>
           <Link href="/" style={styles.navLink}>Home</Link>
+          <Link href="/men" style={styles.navLink}>Men</Link>
+          <Link href="/youth" style={styles.navLink}>Youth</Link>
+          <Link href="/prayer" style={styles.navLink}>Prayer Points</Link>
           <Link href="/about" style={styles.navLink}>About</Link>
           <Link href="/contact" style={styles.navLink}>Contact</Link>
         </nav>
@@ -30,7 +33,7 @@ const styles = {
     flexDirection: 'column',
   },
   header: {
-    background: '#0070f3',
+    background: '#5f5d5d',
     padding: '1rem 2rem',
     display: 'flex',
     justifyContent: 'space-between',
@@ -44,6 +47,7 @@ const styles = {
   nav: {
     display: 'flex',
     gap: '1.5rem',
+    
   },
   navLink: {
     color: '#fff',

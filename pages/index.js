@@ -2,267 +2,262 @@
 import { useState, useEffect } from 'react';
 import { useQuery, gql } from '@apollo/client';
 import Layout from '../components/Layout';
-import PostCard from '../components/PostCard';
 
+// Example: optionally fetch some posts or data if desired
 const GET_POSTS = gql`
-  query GetPosts($filter: PostFilter) {
-    filteredPosts(filter: $filter) {
+  query {
+    posts {
       id
       title
       content
-      slug
       publishedAt
-      categories {
-        id
-        name
-      }
-      tags {
-        id
-        name
-      }
     }
   }
 `;
 
-// A simple HeroSection component for the home page.
-function HeroSection() {
-  return (
-    <div style={heroStyles.container}>
-      <div style={heroStyles.overlay}></div>
-      <div style={heroStyles.content}>
-        <h1 style={heroStyles.title}>Discover Inspiring Stories</h1>
-        <p style={heroStyles.subtitle}>
-          Explore faith, hope, and life-changing insights for a better tomorrow.
-        </p>
-        <button style={heroStyles.button}>Explore Now</button>
-      </div>
-    </div>
-  );
-}
-
 export default function HomePage() {
-  const [searchText, setSearchText] = useState('');
-  const [filter, setFilter] = useState({});
+  // If you want to display some posts
+  const { loading, error, data } = useQuery(GET_POSTS);
 
-  // Query posts (using empty filter initially)
-  const { loading, error, data, refetch } = useQuery(GET_POSTS, {
-    variables: { filter },
-  });
-  
-  useEffect(() => {
-    refetch({ filter });
-  }, [filter, refetch]);
-
-  // Basic in-memory filtering by search text (optional)
-  let filteredPosts = data?.filteredPosts || [];
-  if (searchText) {
-    filteredPosts = filteredPosts.filter(
-      post =>
-        post.title.toLowerCase().includes(searchText.toLowerCase()) ||
-        post.content.toLowerCase().includes(searchText.toLowerCase())
-    );
-  }
-
-  // Pagination example (client-side)
-  const [currentPage, setCurrentPage] = useState(1);
-  const postsPerPage = 4;
-  const totalPosts = filteredPosts.length;
-  const totalPages = Math.ceil(totalPosts / postsPerPage);
-  const currentPosts = filteredPosts.slice(
-    (currentPage - 1) * postsPerPage,
-    currentPage * postsPerPage
-  );
-
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-  };
-
-  if (loading) return <Layout><p style={styles.message}>Loading posts...</p></Layout>;
-  if (error) return <Layout><p style={{...styles.message, color:'red'}}>Error loading posts.</p></Layout>;
+  // Example posts from your backend
+  const posts = data?.posts || [];
 
   return (
     <Layout>
-      {/* Hero Section */}
-      <HeroSection />
+      {/* HERO SECTION */}
+      <section style={styles.hero}>
+        <div style={styles.heroContent}>
+          <h1 style={styles.heroTitle}>Elevate Your Productivity</h1>
+          <p style={styles.heroSubtitle}>
+          Discover inspiring blog posts, practical advice, and timeless wisdom to overcome life's challenges.
+          </p>
+        </div>
+      </section>
 
-      <div style={styles.pageContainer}>
-        {/* Side Navigation */}
-        <aside style={styles.sidebar}>
-          <h3 style={styles.sidebarHeading}>Categories</h3>
-          <a style={styles.sidebarLink}>Men</a>
-          <a style={styles.sidebarLink}>Youth</a>
-          <a style={styles.sidebarLink}>Prayer Points</a>
-        </aside>
-        
-        {/* Main Content */}
-        <div style={styles.main}>
-          {/* Search Bar */}
-          <div style={styles.searchBar}>
-            <input
-              type="text"
-              placeholder="Search posts..."
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-              style={styles.searchInput}
+      {/* PRODUCTIVITY FEATURES SECTION */}
+      <section style={styles.featuresSection}>
+        <h2 style={styles.sectionTitle}> Our mission is to empower boys and men with faith-based guidance on personal growth, relationships, and more.</h2>
+        <div style={styles.featuresGrid}>
+          <div style={styles.featureCard}>
+            <img
+              src="/placeholder.jpg"
+              alt="Busy status"
+              style={styles.featureImage}
             />
+            <h3 style={styles.featureTitle}>Busy Status</h3>
+            <p style={styles.featureText}>
+              Instantly let others know when you're available—or not.
+            </p>
           </div>
-          
-          {/* Post Cards Grid */}
-          <div style={styles.cardsGrid}>
-            {currentPosts.map((post) => (
-              <PostCard key={post.id} post={post} />
-            ))}
+
+          <div style={styles.featureCard}>
+            <img
+              src="/placeholder.jpg"
+              alt="Pomodoro Timer"
+              style={styles.featureImage}
+            />
+            <h3 style={styles.featureTitle}>Pomodoro Timer</h3>
+            <p style={styles.featureText}>
+              A built-in Pomodoro technique to keep your focus razor-sharp.
+            </p>
           </div>
-          
-          {/* Pagination */}
-          <div style={styles.pagination}>
-            <button
-              style={styles.pageButton}
-              disabled={currentPage === 1}
-              onClick={() => handlePageChange(currentPage - 1)}
-            >
-              Previous
-            </button>
-            {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
-              <button
-                key={page}
-                style={{
-                  ...styles.pageButton,
-                  ...(page === currentPage ? styles.activePageButton : {}),
-                }}
-                onClick={() => handlePageChange(page)}
-              >
-                {page}
-              </button>
-            ))}
-            <button
-              style={styles.pageButton}
-              disabled={currentPage === totalPages}
-              onClick={() => handlePageChange(currentPage + 1)}
-            >
-              Next
-            </button>
+
+          <div style={styles.featureCard}>
+            <img
+              src="/placeholder.jpg"
+              alt="Apps Integration"
+              style={styles.featureImage}
+            />
+            <h3 style={styles.featureTitle}>Apps Integration</h3>
+            <p style={styles.featureText}>
+              Connect with your favorite tools for seamless task management.
+            </p>
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* SHOWCASE / IMAGE SECTION */}
+      <section style={styles.showcaseSection}>
+        <div style={styles.showcaseImageContainer}>
+          <img
+            src="/pomodoro-mockup.png"
+            alt="Pomodoro Timer"
+            style={styles.showcaseImage}
+          />
+        </div>
+        <div style={styles.showcaseContent}>
+          <h2>Live Busy Status</h2>
+          <p>
+            Let your workspace automatically adjust availability and do‑not‑disturb settings. 
+            It’s always up‑to‑date, so you don’t have to manually toggle statuses.
+          </p>
+          <button style={styles.ctaButton}>Learn More</button>
+        </div>
+      </section>
+
+      {/* LATEST POSTS SECTION (Optional) */}
+      <section style={styles.postsSection}>
+        <h2 style={styles.sectionTitle}>Latest Posts</h2>
+        {loading && <p>Loading posts...</p>}
+        {error && <p style={{ color: 'red' }}>Error loading posts.</p>}
+        <div style={styles.postsGrid}>
+          {posts.map((post) => (
+            <div key={post.id} style={styles.postCard}>
+              <h3 style={styles.postTitle}>{post.title}</h3>
+              <p style={styles.postExcerpt}>
+                {post.content.length > 100
+                  ? post.content.substring(0, 100) + '...'
+                  : post.content}
+              </p>
+              <p style={styles.postDate}>
+                {post.publishedAt
+                  ? new Date(post.publishedAt).toLocaleDateString()
+                  : 'Unpublished'}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
     </Layout>
   );
 }
 
-const heroStyles = {
-  container: {
+const styles = {
+  hero: {
     position: 'relative',
-    height: '450px',
-    backgroundImage: "url('/hero.jpg')", // Change to your hero image URL
+    backgroundImage: "url('/hero.jpg')",
     backgroundSize: 'cover',
     backgroundPosition: 'center',
-    marginBottom: '2rem',
     width: '100vw',
-    marginLeft: 'calc(50% - 50vw)', // Trick to break out of the parent container
-    position: 'relative',
     height: '450px',
-  },
-  overlay: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    background: 'rgba(0,0,0,0.5)',
-  },
-  content: {
-    position: 'relative',
+    left: '0%',
+    right: '20%',
     color: '#fff',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     textAlign: 'center',
-    top: '50%',
-    transform: 'translateY(-50%)',
-    padding: '0 1rem',
+    marginBottom: '4rem'
   },
-  title: {
+  heroContent: {
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    padding: '2rem',
+    borderRadius: '8px',
+    maxWidth: '600px'
+  },
+  heroTitle: {
     fontSize: '3rem',
-    marginBottom: '1rem',
-    fontWeight: '700',
+    marginBottom: '1rem'
   },
-  subtitle: {
-    fontSize: '1.5rem',
-    marginBottom: '1.5rem',
-  },
-  button: {
-    padding: '0.75rem 1.5rem',
+  heroSubtitle: {
     fontSize: '1.2rem',
+    marginBottom: '1.5rem'
+  },
+  heroButton: {
+    padding: '0.75rem 1.5rem',
+    backgroundColor: '#ff5400',
+    color: '#fff',
+    border: 'none',
+    fontSize: '1rem',
+    borderRadius: '5px',
+    cursor: 'pointer'
+  },
+  featuresSection: {
+    marginBottom: '4rem',
+    textAlign: 'center'
+  },
+  sectionTitle: {
+    fontSize: '2rem',
+    marginBottom: '2rem'
+  },
+  featuresGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+    gap: '2rem',
+    maxWidth: '1200px',
+    margin: '0 auto',
+    padding: '0 1rem'
+  },
+  featureCard: {
+    backgroundColor: '#fff',
+    borderRadius: '8px',
+    padding: '1rem',
+    boxShadow: '0 1px 5px rgba(0,0,0,0.1)',
+    textAlign: 'center'
+  },
+  featureImage: {
+    width: '80px',
+    marginBottom: '1rem'
+  },
+  featureTitle: {
+    fontSize: '1.2rem',
+    marginBottom: '0.5rem'
+  },
+  featureText: {
+    fontSize: '1rem',
+    color: '#444'
+  },
+  showcaseSection: {
+    display: 'flex',
+    gap: '2rem',
+    alignItems: 'center',
+    marginBottom: '4rem',
+    maxWidth: '1200px',
+    margin: '0 auto'
+  },
+  showcaseImageContainer: {
+    flex: 1,
+    textAlign: 'center'
+  },
+  showcaseImage: {
+    width: '100%',
+    maxWidth: '500px',
+    borderRadius: '8px',
+    boxShadow: '0 1px 5px rgba(0,0,0,0.15)'
+  },
+  showcaseContent: {
+    flex: 1,
+    padding: '1rem'
+  },
+  ctaButton: {
+    marginTop: '1rem',
+    padding: '0.75rem 1.5rem',
     backgroundColor: '#0070f3',
     color: '#fff',
     border: 'none',
+    fontSize: '1rem',
     borderRadius: '5px',
-    cursor: 'pointer',
+    cursor: 'pointer'
   },
-};
-
-const styles = {
-  message: {
-    textAlign: "center",
-    fontSize: "1.2rem",
-    color: "#555",
+  postsSection: {
+    marginBottom: '4rem',
+    maxWidth: '1200px',
+    margin: '0 auto',
+    padding: '0 1rem'
   },
-  pageContainer: {
-    display: "flex",
-    gap: "2rem",
+  postsGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+    gap: '1.5rem',
+    marginTop: '2rem'
   },
-  sidebar: {
-    width: "200px",
-    backgroundColor: "#fff",
-    padding: "1rem",
-    borderRadius: "8px",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-    height: "fit-content",
+  postCard: {
+    backgroundColor: '#fff',
+    borderRadius: '6px',
+    padding: '1rem',
+    boxShadow: '0 1px 4px rgba(0,0,0,0.1)'
   },
-  sidebarHeading: {
-    fontSize: "1.2rem",
-    marginBottom: "1rem",
-    color: "#0070f3",
-    fontWeight: "600",
+  postTitle: {
+    fontSize: '1.2rem',
+    marginBottom: '0.5rem'
   },
-  sidebarLink: {
-    display: "block",
-    marginBottom: "0.75rem",
-    color: "#333",
-    textDecoration: "none",
-    cursor: "pointer",
+  postExcerpt: {
+    fontSize: '1rem',
+    color: '#555',
+    marginBottom: '0.5rem'
   },
-  main: {
-    flex: 1,
-  },
-  searchBar: {
-    textAlign: "right",
-    marginBottom: "1.5rem",
-  },
-  searchInput: {
-    padding: "0.6rem",
-    width: "250px",
-    border: "1px solid #ccc",
-    borderRadius: "4px",
-    fontSize: "1rem",
-  },
-  cardsGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-    gap: "1.5rem",
-  },
-  pagination: {
-    marginTop: "2rem",
-    display: "flex",
-    justifyContent: "center",
-    gap: "0.5rem",
-  },
-  pageButton: {
-    padding: "0.5rem 1rem",
-    border: "1px solid #ccc",
-    background: "#fff",
-    cursor: "pointer",
-    borderRadius: "4px",
-    fontSize: "0.9rem",
-  },
-  activePageButton: {
-    background: "#0070f3",
-    color: "#fff",
-    borderColor: "#0070f3",
-  },
+  postDate: {
+    fontSize: '0.85rem',
+    color: '#999'
+  }
 };
