@@ -28,7 +28,7 @@ export default function HomePage() {
       {/* HERO SECTION */}
       <section style={styles.hero}>
         <div style={styles.heroContent}>
-          <h1 style={styles.heroTitle}>Elevate Your Productivity</h1>
+          <h1 style={styles.heroTitle}>Stories That Speak To You</h1>
           <p style={styles.heroSubtitle}>
           Discover inspiring blog posts, practical advice, and timeless wisdom to overcome life's challenges.
           </p>
@@ -192,7 +192,7 @@ const styles = {
   ctaButton: {
     marginTop: '1rem',
     padding: '0.75rem 1.5rem',
-    backgroundColor: '#0070f3',
+    backgroundColor: '#ff5400',
     color: '#fff',
     border: 'none',
     fontSize: '1rem',
