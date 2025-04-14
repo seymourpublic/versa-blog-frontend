@@ -27,7 +27,7 @@ const styles = {
   container: {
     fontFamily: 'Arial, sans-serif',
     color: '#333',
-    backgroundColor: '#f7f7f7',
+    backgroundColor: 'rgb(0, 0, 0)',
     minHeight: '100vh',
     display: 'flex',
     flexDirection: 'column',
@@ -59,11 +59,15 @@ const styles = {
     maxWidth: '1200px',
     margin: '0 auto',
     padding: '0 1rem',
+    backgroundColor: 'rgb(0, 0, 0)',
   },
   footer: {
     background: '#eaeaea',
     textAlign: 'center',
     padding: '1rem',
     fontSize: '0.9rem',
+    textcolor: 'rgba(255, 255, 255, 0.5)',
+    backgroundColor: 'rgb(0, 0, 0)',
+    color: 'rgba(255, 255, 255, 0.8)',
   },
 };
