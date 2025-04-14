@@ -33,7 +33,7 @@ const styles = {
     flexDirection: 'column',
   },
   header: {
-    background: '#5f5d5d',
+    background: '#ff5400',
     padding: '1rem 2rem',
     display: 'flex',
     justifyContent: 'space-between',
@@ -67,7 +67,7 @@ const styles = {
     padding: '1rem',
     fontSize: '0.9rem',
     textcolor: 'rgba(255, 255, 255, 0.5)',
-    backgroundColor: 'rgb(0, 0, 0)',
+    backgroundColor: 'rgba(0, 0, 0, 0.64)',
     color: 'rgba(255, 255, 255, 0.8)',
   },
 };

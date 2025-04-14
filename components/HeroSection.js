@@ -19,7 +19,7 @@ export default function HeroSection() {
       position: 'relative',
       width: '100vw', // Full viewport width
       height: '450px',
-      backgroundImage: "url('/hero.jpg')", // Ensure hero.jpg is in the public folder
+      backgroundImage: "url('/placeholder2.jpg')", // Ensure hero.jpg is in the public folder
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       marginBottom: '2rem',
@@ -66,6 +66,7 @@ export default function HeroSection() {
       border: 'none',
       borderRadius: '5px',
       cursor: 'pointer',
+      backgroundColor: '#ff5400',
     },
   };
   

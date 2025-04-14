@@ -90,7 +90,7 @@ export default function HomePage() {
 const styles = {
   hero: {
     position: 'relative',
-    backgroundImage: "url('/hero.jpg')",
+    backgroundImage: "url('/placeholder2.jpg')",
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     height: '80vh',

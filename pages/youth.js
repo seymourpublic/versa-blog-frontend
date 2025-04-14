@@ -48,7 +48,7 @@ const GET_CATEGORIES = gql`
   }
 `;
 
-export default function MenPage() {
+export default function YouthPage() {
   const [searchText, setSearchText] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [filter, setFilter] = useState({});
@@ -115,7 +115,7 @@ export default function MenPage() {
   return (
     <Layout>
       {/* Hero Section gives a welcoming banner */}
-      <HeroSection title="Discover Our Posts" subtitle="Engaging content just for you" />
+      <HeroSection title="Discover Posts on the Issues that the Youth Face" subtitle="Engaging content just for you" />
 
       <div style={styles.pageContainer}>
         {/* Sidebar Navigation */}

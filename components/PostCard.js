@@ -36,6 +36,7 @@ const styles = {
     boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
     display: 'flex',
     flexDirection: 'column',
+    color: '#ff5400',
   },
   image: {
     width: '100%',
@@ -48,7 +49,7 @@ const styles = {
   title: {
     fontSize: '1.5rem',
     margin: '0 0 0.5rem',
-    color: '#333',
+    color: '#ff5400',
   },
   link: {
     color: '#0070f3',
@@ -66,7 +67,7 @@ const styles = {
     marginBottom: '1rem',
   },
   readMore: {
-    color: '#0070f3',
+    color: '#ff5400',
     fontWeight: '600',
     textDecoration: 'none',
     fontSize: '1rem',
