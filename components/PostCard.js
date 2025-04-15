@@ -15,7 +15,7 @@ export default function PostCard({ post }) {
           </Link>
         </h2>
         <p style={styles.date}>
-          {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : ""}
+          {post.updatedAt ? new Date(post.updatedAt).toLocaleDateString() : ""}
         </p>
         <p style={styles.excerpt}>
           {post.content.length > 120 ? post.content.substring(0, 120) + '...' : post.content}
@@ -49,11 +49,12 @@ const styles = {
   title: {
     fontSize: '1.5rem',
     margin: '0 0 0.5rem',
-    color: '#ff5400',
+    color: '#rgba(0, 0, 0, 0.8)',
   },
   link: {
     color: '#0070f3',
     textDecoration: 'none',
+    color: '#rgba(0, 0, 0, 0.8)',
   },
   date: {
     fontSize: '0.9rem',

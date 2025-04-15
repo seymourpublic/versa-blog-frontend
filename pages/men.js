@@ -1,12 +1,13 @@
-// pages/men
+// pages/men.js
 import { useState, useEffect } from 'react';
 import { useQuery, gql } from '@apollo/client';
 import Layout from '../components/Layout';
-import FilterBar from '../components/FilterBar';
 import Link from 'next/link';
 import PostCard from '../components/PostCard';
-import HeroSection from '../components/HeroSection';
 
+/** ------------
+ *  GraphQL Queries
+ *--------------*/
 const GET_POSTS = gql`
   query GetPosts($filter: PostFilter) {
     filteredPosts(filter: $filter) {
@@ -48,6 +49,9 @@ const GET_CATEGORIES = gql`
   }
 `;
 
+/** ------------
+ *  Main Component
+ *--------------*/
 export default function MenPage() {
   const [searchText, setSearchText] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
@@ -58,11 +62,17 @@ export default function MenPage() {
     variables: { filter },
   });
 
-  const { loading: loadingCats, error: errorCats, data: dataCats } = useQuery(GET_CATEGORIES);
+  const { loading: loadingCats, error: errorCats, data: dataCats } =
+    useQuery(GET_CATEGORIES);
 
+  /* ------------
+   *  Handle Filters
+   *--------------*/
   useEffect(() => {
     const newFilter = { searchText };
-    if (selectedCategory) newFilter.category = selectedCategory;
+    if (selectedCategory) {
+      newFilter.categoryId = selectedCategory;
+    }
     setFilter(newFilter);
   }, [searchText, selectedCategory]);
 
@@ -70,35 +80,27 @@ export default function MenPage() {
     refetch({ filter });
   }, [filter, refetch]);
 
-  if (loading) {
+  /* ------------
+   *  Loading & Error States
+   *--------------*/
+  if (loading || loadingCats) {
     return (
       <Layout>
-        <p style={styles.message}>Loading posts...</p>
+        <p style={styles.loading}>Loading...</p>
       </Layout>
     );
   }
-  if (error) {
+  if (error || errorCats) {
     return (
       <Layout>
-        <p style={{ ...styles.message, color: '#ff4d4f' }}>Error loading posts.</p>
-      </Layout>
-    );
-  }
-  if (loadingCats) {
-    return (
-      <Layout>
-        <p style={styles.message}>Loading categories...</p>
-      </Layout>
-    );
-  }
-  if (errorCats) {
-    return (
-      <Layout>
-        <p style={{ ...styles.message, color: '#ff4d4f' }}>Error loading categories.</p>
+        <p style={styles.error}>Error loading data.</p>
       </Layout>
     );
   }
 
+  /* ------------
+   *  Data
+   *--------------*/
   const posts = data?.filteredPosts || [];
   const categories = dataCats?.categories || [];
 
@@ -106,194 +108,318 @@ export default function MenPage() {
   const postsPerPage = 4;
   const totalPosts = posts.length;
   const totalPages = Math.ceil(totalPosts / postsPerPage);
-  const currentPosts = posts.slice((currentPage - 1) * postsPerPage, currentPage * postsPerPage);
+  const currentPosts = posts.slice(
+    (currentPage - 1) * postsPerPage,
+    currentPage * postsPerPage
+  );
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
 
+  // For demonstration, we'll treat the very first post as the "featured" hero post
+  // If you want to pick a specific post or random one, adjust the logic below.
+  const [featuredPost, ...otherPosts] = posts;
+
+  /* ------------
+   *  Render
+   *--------------*/
   return (
     <Layout>
-      {/* Hero Section gives a welcoming banner */}
-      <HeroSection title="Discover Our Posts" subtitle="Engaging content just for you" />
-
-      <div style={styles.pageContainer}>
-        {/* Sidebar Navigation */}
-        <aside style={styles.sidebar}>
-          <h3 style={styles.sidebarHeading}>Browse</h3>
-          <Link href="/men" style={styles.navLink}>Men</Link>
-          <Link href="/youth" style={styles.navLink}>Youth</Link>
-          <Link href="/prayer" style={styles.navLink}>Prayer Points</Link>
-          <Link href="/about" style={styles.navLink}>About</Link>
-          <Link href="/contact" style={styles.navLink}>Contact</Link>
-        </aside>
-
-        {/* Main Content */}
-        <div style={styles.main}>
-          {/* Filter Bar */}
-          <div style={styles.filterBar}>
-            <input
-              type="text"
-              placeholder="Search posts..."
-              value={searchText}
-              onChange={(e) => {
-                setSearchText(e.target.value);
-                setCurrentPage(1);
-              }}
-              style={styles.searchInput}
-            />
-            <select
-              value={selectedCategory}
-              onChange={(e) => {
-                setSelectedCategory(e.target.value);
-                setCurrentPage(1);
-              }}
-              style={styles.select}
-            >
-              <option value="">All Categories</option>
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
+      {/* Hero Section, featuring the top/first post */}
+      {featuredPost && (
+        <section style={styles.heroSection}>
+          <div style={styles.heroTextContainer}>
+            {/* "The Blog" / Category label up top */}
+            <p style={styles.heroCategoryLabel}>The Blog</p>
+            <h1 style={styles.heroTitle}>{featuredPost.title}</h1>
+            {/* Just an example date */}
+            <p style={styles.heroDate}>
+              {new Date(featuredPost.updatedAt).toDateString()}
+            </p>
+            <Link href={`/posts/${featuredPost.slug}`}>
+              <button style={styles.readArticleButton}>Read article</button>
+            </Link>
           </div>
+          <div style={styles.heroImageContainer}>
+            {/* If the post has images, pick the first; otherwise fallback */}
+            {/* For demonstration, we’re using a placeholder image */}
+            <img
+              src="/placeholder.jpg"
+              alt="Hero Post"
+              style={styles.heroImage}
+            />
+          </div>
+        </section>
+      )}
 
-          {/* Posts Grid */}
-          <div style={styles.cardsGrid}>
+      {/* Latest Stories + Search Row */}
+      <section style={styles.latestStoriesSection}>
+        <div style={styles.latestStoriesHeadingContainer}>
+          <h2 style={styles.latestStoriesHeading}>Latest stories</h2>
+        </div>
+        <div style={styles.searchBarContainer}>
+          <input
+            type="text"
+            placeholder="What are you looking for?"
+            value={searchText}
+            onChange={(e) => {
+              setSearchText(e.target.value);
+              setCurrentPage(1);
+            }}
+            style={styles.searchInput}
+          />
+          <select
+            value={selectedCategory}
+            onChange={(e) => {
+              setSelectedCategory(e.target.value);
+              setCurrentPage(1);
+            }}
+            style={styles.select}
+          >
+            <option value="">All Categories</option>
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      </section>
+
+      {/* Posts Grid */}
+      <section style={styles.postsContainer}>
+        {otherPosts.length === 0 ? (
+          <p style={styles.noPosts}>No posts found.</p>
+        ) : (
+          <div style={styles.postsGrid}>
             {currentPosts.map((post) => (
               <PostCard key={post.id} post={post} />
             ))}
           </div>
+        )}
+      </section>
 
-          {/* Pagination Controls */}
-          <div style={styles.pagination}>
+      {/* Pagination Controls */}
+      {otherPosts.length > 0 && (
+        <div style={styles.pagination}>
+          <button
+            style={styles.pageButton}
+            disabled={currentPage === 1}
+            onClick={() => handlePageChange(currentPage - 1)}
+          >
+            Previous
+          </button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
             <button
-              style={styles.pageButton}
-              disabled={currentPage === 1}
-              onClick={() => handlePageChange(currentPage - 1)}
+              key={page}
+              style={{
+                ...styles.pageButton,
+                ...(page === currentPage ? styles.activePageButton : {}),
+              }}
+              onClick={() => handlePageChange(page)}
             >
-              Previous
+              {page}
             </button>
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-              <button
-                key={page}
-                style={{
-                  ...styles.pageButton,
-                  ...(page === currentPage ? styles.activePageButton : {}),
-                }}
-                onClick={() => handlePageChange(page)}
-              >
-                {page}
-              </button>
-            ))}
-            <button
-              style={styles.pageButton}
-              disabled={currentPage === totalPages}
-              onClick={() => handlePageChange(currentPage + 1)}
-            >
-              Next
-            </button>
-          </div>
+          ))}
+          <button
+            style={styles.pageButton}
+            disabled={currentPage === totalPages}
+            onClick={() => handlePageChange(currentPage + 1)}
+          >
+            Next
+          </button>
         </div>
-      </div>
+      )}
     </Layout>
   );
 }
 
+/** ------------
+ *  Styles
+ *--------------*/
 const styles = {
-  message: {
+  /* General */
+  loading: {
+    textAlign: 'center',
+    margin: '2rem',
+    fontSize: '1.2rem',
+  },
+  error: {
+    textAlign: 'center',
+    margin: '2rem',
+    fontSize: '1.2rem',
+    color: 'red',
+  },
+  noPosts: {
     textAlign: 'center',
     fontSize: '1.2rem',
     color: '#555',
-    padding: '2rem 0',
-    border: '1px solid #ff5400'
+    marginTop: '2rem',
   },
-  pageContainer: {
+
+  /* Top Nav */
+  topNav: {
     display: 'flex',
-    gap: '2rem',
-    padding: '2rem',
-    maxWidth: '1200px',
-    margin: '0 auto',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#0A615F', // Example green shade
+    padding: '1rem 2rem',
   },
-  sidebar: {
-    width: '220px',
-    backgroundColor: '#f9f9f9',
-    padding: '1.5rem',
-    borderRadius: '8px',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-    alignSelf: 'flex-start',
-    border: '1px solid #ff5400',
+  logoArea: {
+    fontWeight: 'bold',
+    fontSize: '1.5rem',
+    color: '#fff',
   },
-  sidebarHeading: {
-    fontSize: '1.4rem',
-    marginBottom: '1rem',
-    color: '#333',
-    fontWeight: '700',
+  navLinks: {
+    listStyle: 'none',
+    display: 'flex',
+    gap: '1.5rem',
   },
-  sidebarLink: {
-    display: 'block',
-    marginBottom: '0.75rem',
-    color: '#0070f3',
+  navLink: {
+    color: '#fff',
     textDecoration: 'none',
-    fontSize: '1.1rem',
-    transition: 'color 0.2s ease-in-out',
+    fontWeight: '500',
+    fontSize: '1rem',
   },
-  main: {
-    flex: 1,
+  demoButton: {
+    backgroundColor: '#fff',
+    color: '#0A615F',
+    border: 'none',
+    padding: '0.5rem 1rem',
+    borderRadius: '6px',
+    cursor: 'pointer',
+    fontWeight: '600',
   },
-  filterBar: {
+
+  /* Hero Section */
+  heroSection: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: '2rem',
+    alignItems: 'center',
+    maxWidth: '1200px',
+    margin: '2rem auto',
+    padding: '0 2rem',
+  },
+  heroTextContainer: {
     display: 'flex',
-    justifyContent: 'flex-end',
+    flexDirection: 'column',
     gap: '1rem',
-    marginBottom: '2rem',
+  },
+  heroCategoryLabel: {
+    fontSize: '0.9rem',
+    color: 'rgba(255, 255, 255, 0.8)',
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+  },
+  heroTitle: {
+    color: 'rgba(255, 255, 255, 0.8)',
+    fontSize: '2.5rem',
+    fontWeight: '700',
+    margin: '0',
+    lineHeight: '1.2',
+  },
+  heroDate: {
+    fontSize: '0.9rem',
+    color: '#666',
+    marginBottom: '1rem',
+  },
+  readArticleButton: {
+    alignSelf: 'start',
+    backgroundColor: '#ff5400',
+    color: '#fff',
+    padding: '0.8rem 1.4rem',
+    border: 'none',
+    borderRadius: '6px',
+    fontSize: '1rem',
+    fontWeight: '600',
+    cursor: 'pointer',
+  },
+  heroImageContainer: {
+    width: '100%',
+    height: '100%',
+  },
+  heroImage: {
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+    borderRadius: '8px',
+  },
+
+  /* Latest Stories & Search */
+  latestStoriesSection: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    maxWidth: '1200px',
+    margin: '2rem auto',
+    padding: '0 2rem',
+  },
+  latestStoriesHeadingContainer: {
+    flex: '0 0 auto',
+    color: 'rgba(255, 255, 255, 0.8)',
+  },
+  latestStoriesHeading: {
+    fontSize: '1.8rem',
+    fontWeight: '700',
+    margin: 0,
+  },
+  searchBarContainer: {
+    display: 'flex',
+    gap: '1rem',
   },
   searchInput: {
     padding: '0.8rem 1rem',
-    width: '260px',
+    width: '220px',
     border: '1px solid #ddd',
     borderRadius: '6px',
     fontSize: '1rem',
     outline: 'none',
-    transition: 'border-color 0.2s ease',
-    border: '1px solid #ff5400'
   },
   select: {
     padding: '0.8rem 1rem',
-    border: '1px solid #ff5400',
+    border: '1px solid #ddd',
     borderRadius: '6px',
     fontSize: '1rem',
     backgroundColor: '#fff',
-    width: '200px',
+    width: '180px',
     outline: 'none',
-    transition: 'border-color 0.2s ease',
-   color: 'rgba(1, 1, 1, 0.8)',
+    color: 'rgba(1, 1, 1, 0.8)',
   },
-  cardsGrid: {
+
+  /* Posts Grid */
+  postsContainer: {
+    maxWidth: '1200px',
+    margin: '0 auto 2rem',
+    padding: '0 2rem',
+  },
+  postsGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
     gap: '2rem',
-  },
-  pagination: {
     marginTop: '2rem',
+  },
+
+  /* Pagination */
+  pagination: {
     display: 'flex',
     justifyContent: 'center',
     gap: '0.5rem',
+    marginBottom: '2rem',
   },
   pageButton: {
     padding: '0.7rem 1.2rem',
-    border: '1px solid #ddd',
     background: '#fff',
+    border: '1px solid #ccc',
     cursor: 'pointer',
     borderRadius: '6px',
     fontSize: '1rem',
     transition: 'all 0.2s ease',
-    border: '1px solid #ff5400'
   },
   activePageButton: {
-    background: '#0070f3',
+    backgroundColor: '#0A615F',
     color: '#fff',
-    borderColor: '#0070f3',
-    backgroundColor: '#ff5400',
+    border: '1px solid #0A615F',
   },
 };

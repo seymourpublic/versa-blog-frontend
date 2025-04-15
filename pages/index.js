@@ -44,7 +44,7 @@ export default function HomePage() {
       {/* SHOWCASE / IMAGE SECTION */}
       <section style={styles.showcaseSection}>
         <div style={styles.showcaseImageContainer}>
-        <img
+        <image
           src="/placeholder.jpg"
           alt="Pomodoro Timer"
           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
