@@ -9,17 +9,14 @@ const GET_POST_BY_ID = gql`
       id
       title
       content
-      slug
       publishedAt
-      imageUrl
+      updatedAt
       categories {
         id
         name
       }
-      tags {
-        id
-        name
-      }
+      status
+      
     }
   }
 `;

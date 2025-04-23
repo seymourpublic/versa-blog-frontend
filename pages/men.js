@@ -135,7 +135,7 @@ export default function MenPage() {
               <p style={styles.heroDate}>
                 {new Date(featuredPost.updatedAt).toDateString()}
               </p>
-              <Link href={`/posts/${featuredPost.slug}`}>
+              <Link href={`/posts/${featuredPost.id}`}>
                 <button style={styles.readArticleButton}>Read article</button>
               </Link>
             </div>
