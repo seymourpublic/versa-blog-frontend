@@ -4,6 +4,7 @@ import { useQuery, gql } from '@apollo/client';
 import Layout from '../components/Layout';
 import Link from 'next/link';
 import PostCard from '../components/PostCard';
+import HeroSection from '../components/HeroSection';
 
 /** ------------
  *  GraphQL Queries
@@ -53,187 +54,179 @@ const GET_CATEGORIES = gql`
  *  Main Component
  *--------------*/
 export default function MenPage() {
-  const [searchText, setSearchText] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [filter, setFilter] = useState({});
-  const [currentPage, setCurrentPage] = useState(1);
+    const [searchText, setSearchText] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState('');
+    const [filter, setFilter] = useState({
+      // Default filter to only show posts in the "Men" category
+      categoryId: "67fd466dcaf2905cfc1b924d" 
+    });
+    
+    const [currentPage, setCurrentPage] = useState(1);
 
-  const { loading, error, data, refetch } = useQuery(GET_POSTS, {
-    variables: { filter },
-  });
-
-  const { loading: loadingCats, error: errorCats, data: dataCats } =
-    useQuery(GET_CATEGORIES);
-
-  /* ------------
-   *  Handle Filters
-   *--------------*/
-  useEffect(() => {
-    const newFilter = { searchText };
-    if (selectedCategory) {
-      newFilter.categoryId = selectedCategory;
-    }
-    setFilter(newFilter);
-  }, [searchText, selectedCategory]);
-
-  useEffect(() => {
-    refetch({ filter });
-  }, [filter, refetch]);
-
-  /* ------------
-   *  Loading & Error States
-   *--------------*/
-  if (loading || loadingCats) {
+    //const menCategory = dataCats?.categories.find(cat => cat.name === "Men");
+  
+    const { loading, error, data, refetch } = useQuery(GET_POSTS, {
+      variables: { filter },
+    });
+  
+    const { loading: loadingCats, error: errorCats, data: dataCats } =
+      useQuery(GET_CATEGORIES);
+  
+    /* Handle Filters */
+    useEffect(() => {
+      const timeoutId = setTimeout(() => {
+        const newFilter = {
+          categoryId: "67fd466dcaf2905cfc1b924d"
+        };
+        if (searchText) newFilter.searchText = searchText;
+        if (selectedCategory) newFilter.categoryId = selectedCategory;
+        setFilter(newFilter);
+        setCurrentPage(1);
+      }, 300); // Debounce to avoid rapid requests
+  
+      return () => clearTimeout(timeoutId);
+    }, [searchText, selectedCategory]);
+  
+    useEffect(() => {
+      refetch({ filter });
+    }, [filter, refetch]);
+  
+    if (loading || loadingCats)
+      return (
+        <Layout>
+          <p style={styles.loading}>Loading...</p>
+        </Layout>
+      );
+  
+    if (error || errorCats)
+      return (
+        <Layout>
+          <p style={styles.error}>Error loading data.</p>
+        </Layout>
+      );
+  
+    const posts = data?.filteredPosts || [];
+    const categories = dataCats?.categories || [];
+  
+    const postsPerPage = 4;
+    const totalPosts = posts.length;
+    const totalPages = Math.ceil(totalPosts / postsPerPage);
+    const currentPosts = posts.slice(
+      (currentPage - 1) * postsPerPage,
+      currentPage * postsPerPage
+    );
+  
+    const handlePageChange = (page) => setCurrentPage(page);
+  
+    const [featuredPost, ...otherPosts] = posts;
+  
+    const handleSearchChange = (e) => setSearchText(e.target.value);
+    const handleCategoryChange = (e) => setSelectedCategory(e.target.value);
+    const menCategory = dataCats?.categories.find(cat => cat.name === "Men");
+  
     return (
       <Layout>
-        <p style={styles.loading}>Loading...</p>
-      </Layout>
-    );
-  }
-  if (error || errorCats) {
-    return (
-      <Layout>
-        <p style={styles.error}>Error loading data.</p>
-      </Layout>
-    );
-  }
-
-  /* ------------
-   *  Data
-   *--------------*/
-  const posts = data?.filteredPosts || [];
-  const categories = dataCats?.categories || [];
-
-  // Pagination (client-side)
-  const postsPerPage = 4;
-  const totalPosts = posts.length;
-  const totalPages = Math.ceil(totalPosts / postsPerPage);
-  const currentPosts = posts.slice(
-    (currentPage - 1) * postsPerPage,
-    currentPage * postsPerPage
-  );
-
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-  };
-
-  // For demonstration, we'll treat the very first post as the "featured" hero post
-  // If you want to pick a specific post or random one, adjust the logic below.
-  const [featuredPost, ...otherPosts] = posts;
-
-  /* ------------
-   *  Render
-   *--------------*/
-  return (
-    <Layout>
-      {/* Hero Section, featuring the top/first post */}
-      {featuredPost && (
-        <section style={styles.heroSection}>
-          <div style={styles.heroTextContainer}>
-            {/* "The Blog" / Category label up top */}
-            <p style={styles.heroCategoryLabel}>The Blog</p>
-            <h1 style={styles.heroTitle}>{featuredPost.title}</h1>
-            {/* Just an example date */}
-            <p style={styles.heroDate}>
-              {new Date(featuredPost.updatedAt).toDateString()}
-            </p>
-            <Link href={`/posts/${featuredPost.slug}`}>
-              <button style={styles.readArticleButton}>Read article</button>
-            </Link>
-          </div>
-          <div style={styles.heroImageContainer}>
-            {/* If the post has images, pick the first; otherwise fallback */}
-            {/* For demonstration, we’re using a placeholder image */}
-            <img
-              src="/placeholder.jpg"
-              alt="Hero Post"
-              style={styles.heroImage}
-            />
-          </div>
+        <HeroSection title="Discover Posts on the Issues that the Youth Face" subtitle="Engaging content just for you" />
+        {featuredPost && (
+          <section style={styles.heroSection}>
+            <div style={styles.heroTextContainer}>
+              <p style={styles.heroCategoryLabel}>Discover Posts on the Issues that Men Face</p>
+              <h1 style={styles.heroTitle}>{featuredPost.title}</h1>
+              <p style={styles.heroDate}>
+                {new Date(featuredPost.updatedAt).toDateString()}
+              </p>
+              <Link href={`/posts/${featuredPost.slug}`}>
+                <button style={styles.readArticleButton}>Read article</button>
+              </Link>
+            </div>
+            <div style={styles.heroImageContainer}>
+              <img src="/placeholder.jpg" alt="Hero Post" style={styles.heroImage} />
+            </div>
+          </section>
+        )}
+  
+        {/* Latest Stories + Search Row */}
+<section style={styles.latestStoriesSection}>
+  <div style={styles.latestStoriesHeadingContainer}>
+    <h2 style={styles.latestStoriesHeading}>Latest stories</h2>
+  </div>
+  <form 
+    style={styles.searchBarContainer}
+    onSubmit={(e) => e.preventDefault()} // This prevents form submission
+  >
+    <input
+      type="text"
+      placeholder="What are you looking for?"
+      value={searchText}
+      onChange={(e) => {
+        setSearchText(e.target.value);
+        setCurrentPage(1);
+      }}
+      style={styles.searchInput}
+    />
+    <select
+      value={selectedCategory}
+      onChange={(e) => {
+        setSelectedCategory(e.target.value);
+        setCurrentPage(1);
+      }}
+      style={styles.select}
+    >
+      <option value={menCategory?.id || ""}>All Categories</option>
+      {menCategory?.subcategories?.map((subcat) => (
+        <option key={subcat.id} value={subcat.id}>
+          {subcat.name}
+        </option>
+      ))}
+    </select>
+  </form>
+</section>
+  
+        <section style={styles.postsContainer}>
+          {otherPosts.length === 0 ? (
+            <p style={styles.noPosts}>No posts found.</p>
+          ) : (
+            <div style={styles.postsGrid}>
+              {currentPosts.map((post) => (
+                <PostCard key={post.id} post={post} />
+              ))}
+            </div>
+          )}
         </section>
-      )}
-
-      {/* Latest Stories + Search Row */}
-      <section style={styles.latestStoriesSection}>
-        <div style={styles.latestStoriesHeadingContainer}>
-          <h2 style={styles.latestStoriesHeading}>Latest stories</h2>
-        </div>
-        <div style={styles.searchBarContainer}>
-          <input
-            type="text"
-            placeholder="What are you looking for?"
-            value={searchText}
-            onChange={(e) => {
-              setSearchText(e.target.value);
-              setCurrentPage(1);
-            }}
-            style={styles.searchInput}
-          />
-          <select
-            value={selectedCategory}
-            onChange={(e) => {
-              setSelectedCategory(e.target.value);
-              setCurrentPage(1);
-            }}
-            style={styles.select}
-          >
-            <option value="">All Categories</option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.name}
-              </option>
+  
+        {otherPosts.length > 0 && (
+          <div style={styles.pagination}>
+            <button
+              style={styles.pageButton}
+              disabled={currentPage === 1}
+              onClick={() => handlePageChange(currentPage - 1)}
+            >
+              Previous
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                style={{
+                  ...styles.pageButton,
+                  ...(page === currentPage ? styles.activePageButton : {}),
+                }}
+                onClick={() => handlePageChange(page)}
+              >
+                {page}
+              </button>
             ))}
-          </select>
-        </div>
-      </section>
-
-      {/* Posts Grid */}
-      <section style={styles.postsContainer}>
-        {otherPosts.length === 0 ? (
-          <p style={styles.noPosts}>No posts found.</p>
-        ) : (
-          <div style={styles.postsGrid}>
-            {currentPosts.map((post) => (
-              <PostCard key={post.id} post={post} />
-            ))}
+            <button
+              style={styles.pageButton}
+              disabled={currentPage === totalPages}
+              onClick={() => handlePageChange(currentPage + 1)}
+            >
+              Next
+            </button>
           </div>
         )}
-      </section>
-
-      {/* Pagination Controls */}
-      {otherPosts.length > 0 && (
-        <div style={styles.pagination}>
-          <button
-            style={styles.pageButton}
-            disabled={currentPage === 1}
-            onClick={() => handlePageChange(currentPage - 1)}
-          >
-            Previous
-          </button>
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-            <button
-              key={page}
-              style={{
-                ...styles.pageButton,
-                ...(page === currentPage ? styles.activePageButton : {}),
-              }}
-              onClick={() => handlePageChange(page)}
-            >
-              {page}
-            </button>
-          ))}
-          <button
-            style={styles.pageButton}
-            disabled={currentPage === totalPages}
-            onClick={() => handlePageChange(currentPage + 1)}
-          >
-            Next
-          </button>
-        </div>
-      )}
-    </Layout>
-  );
-}
+      </Layout>
+    );
+  }
 
 /** ------------
  *  Styles

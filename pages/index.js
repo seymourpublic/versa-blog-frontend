@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useQuery, gql } from '@apollo/client';
 import Layout from '../components/Layout';
+import HeroSection from '../components/HeroSection';
 
 // Example: optionally fetch some posts or data if desired
 const GET_POSTS = gql`
@@ -26,19 +27,11 @@ export default function HomePage() {
   return (
     <Layout>
       {/* HERO SECTION */}
-      <section style={styles.hero}>
-        <div style={styles.heroContent}>
-          <h1 style={styles.heroTitle}>Stories That Speak To You</h1>
-          <p style={styles.heroSubtitle}>
-          Discover inspiring blog posts, practical advice, and timeless wisdom to overcome life's challenges.
-          </p>
-        </div>
-      </section>
+      <HeroSection title="Discover Posts on the Issues that the Youth Face" subtitle="Engaging content just for you" />
 
       {/* PRODUCTIVITY FEATURES SECTION */}
       <section style={styles.featuresSection}>
         <h2 style={styles.sectionTitle}> Our mission is to empower boys and men with faith-based guidance on personal growth, relationships, and more.</h2>
-        
       </section>
 
       {/* SHOWCASE / IMAGE SECTION */}
@@ -53,8 +46,8 @@ export default function HomePage() {
         <div style={styles.showcaseContent}>
           <h2>Coming Next</h2>
           <p>
-            Let your workspace automatically adjust availability and do‑not‑disturb settings. 
-            It’s always up‑to‑date, so you don’t have to manually toggle statuses.
+            A sneak peak into our upcoming posts and topics we have in store for you.
+            Stay tuned for more insights and stories that will inspire and motivate you.
           </p>
           <button style={styles.ctaButton}>Learn More</button>
         </div>

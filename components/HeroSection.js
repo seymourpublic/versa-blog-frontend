@@ -18,7 +18,7 @@ export default function HeroSection() {
     container: {
       position: 'relative',
       width: '100vw', // Full viewport width
-      height: '450px',
+      height: '650px',
       backgroundImage: "url('/placeholder2.jpg')", // Ensure hero.jpg is in the public folder
       backgroundSize: 'cover',
       backgroundPosition: 'center',

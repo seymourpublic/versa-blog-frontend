@@ -62,7 +62,7 @@ const styles = {
     backgroundColor: 'rgb(0, 0, 0)',
   },
   footer: {
-    background: '#eaeaea',
+    background: 'rgba(0, 0, 0, 0.64)',
     textAlign: 'center',
     padding: '1rem',
     fontSize: '0.9rem',
