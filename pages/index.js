@@ -1,10 +1,13 @@
 // pages/index.js
 import { useState, useEffect } from 'react';
 import { useQuery, gql } from '@apollo/client';
+import Image from 'next/image';
+import Link from 'next/link';
 import Layout from '../components/Layout';
 import HeroSection from '../components/HeroSection';
+import styles from '../styles/HomePage.module.css';
 
-// Example: optionally fetch some posts or data if desired
+// Fetch only the data we need
 const GET_POSTS = gql`
   query {
     posts {
@@ -18,211 +21,98 @@ const GET_POSTS = gql`
 `;
 
 export default function HomePage() {
-  // If you want to display some posts
   const { loading, error, data } = useQuery(GET_POSTS);
-
-  // Example posts from your backend
   const posts = data?.posts || [];
 
   return (
     <Layout>
       {/* HERO SECTION */}
-      <HeroSection title="Discover Posts on the Issues that the Youth Face" subtitle="Engaging content just for you" />
+      <HeroSection 
+        title="Discover Posts on the Issues that the Youth Face" 
+        subtitle="Engaging content just for you" 
+      />
 
-      {/* PRODUCTIVITY FEATURES SECTION */}
-      <section style={styles.featuresSection}>
-        <h2 style={styles.sectionTitle}> Our mission is to empower boys and men with faith-based guidance on personal growth, relationships, and more.</h2>
+      {/* MISSION SECTION */}
+      <section className={styles.featuresSection}>
+        <div className={styles.container}>
+          <h2 className={styles.sectionTitle}>
+            Our mission is to empower boys and men with faith-based guidance on personal growth, relationships, and more.
+          </h2>
+        </div>
       </section>
 
       {/* SHOWCASE / IMAGE SECTION */}
-      <section style={styles.showcaseSection}>
-        <div style={styles.showcaseImageContainer}>
-        <image
-          src="/placeholder.jpg"
-          alt="Pomodoro Timer"
-          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-        />
-        </div>
-        <div style={styles.showcaseContent}>
-          <h2>Coming Next</h2>
-          <p>
-            A sneak peak into our upcoming posts and topics we have in store for you.
-            Stay tuned for more insights and stories that will inspire and motivate you.
-          </p>
-          <button style={styles.ctaButton}>Learn More</button>
+      <section className={styles.showcaseSection}>
+        <div className={styles.container}>
+          <div className={styles.showcaseGrid}>
+            <div className={styles.showcaseImageContainer}>
+              <Image
+                src="/placeholder.jpg"
+                alt="Young men participating in a faith-based mentoring session"
+                width={600}
+                height={400}
+                className={styles.showcaseImage}
+                priority
+              />
+            </div>
+            <div className={styles.showcaseContent}>
+              <h2>Coming Next</h2>
+              <p>
+                A sneak peek into our upcoming posts and topics we have in store for you.
+                Stay tuned for more insights and stories that will inspire and motivate you.
+              </p>
+              <Link href="/upcoming" passHref>
+                <button 
+                  className={styles.ctaButton}
+                  onClick={() => console.log('Learn more clicked')}
+                  aria-label="Learn more about upcoming content"
+                >
+                  Learn More
+                </button>
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* LATEST POSTS SECTION (Optional) */}
-      <section style={styles.postsSection}>
-        <h2 style={styles.sectionTitle}>Latest Posts</h2>
-        {loading && <p>Loading posts...</p>}
-        {error && <p style={{ color: 'red' }}>Error loading posts.</p>}
-        <div style={styles.postsGrid}>
-          {posts.map((post) => (
-            <div key={post.id} style={styles.postCard}>
-              <h3 style={styles.postTitle}>{post.title}</h3>
-              <p style={styles.postExcerpt}>
-                {post.content.length > 100
-                  ? post.content.substring(0, 100) + '...'
-                  : post.content}
-              </p>
-              <p style={styles.postDate}>
-                {post.updatedAt
-                  ? new Date(post.updatedAt).toLocaleDateString()
-                  : 'published'}
-              </p>
+      {/* LATEST POSTS SECTION */}
+      <section className={styles.postsSection}>
+        <div className={styles.container}>
+          <h2 className={styles.sectionTitle}>Latest Posts</h2>
+          
+          {loading && <div className={styles.loadingIndicator}>Loading posts...</div>}
+          
+          {error && (
+            <div className={styles.errorMessage}>
+              Error loading posts. Please try again later.
             </div>
-          ))}
+          )}
+          
+          {!loading && !error && posts.length === 0 && (
+            <p className={styles.noPosts}>No posts available yet. Check back soon!</p>
+          )}
+          
+          <div className={styles.postsGrid}>
+            {posts.map((post) => (
+              <article key={post.id} className={styles.postCard}>
+                <h3 className={styles.postTitle}>
+                  <Link href={`/posts/${post.slug}`}>
+                    {post.title}
+                  </Link>
+                </h3>
+                <p className={styles.postExcerpt}>
+                  {post.excerpt || (post.content && post.content.substring(0, 100) + '...')}
+                </p>
+                <p className={styles.postDate}>
+                  {post.updatedAt
+                    ? `Updated: ${new Date(post.updatedAt).toLocaleDateString()}`
+                    : `Published: ${new Date(post.publishedAt).toLocaleDateString()}`}
+                </p>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
     </Layout>
   );
 }
-
-const styles = {
-  hero: {
-    position: 'relative',
-    backgroundImage: "url('/placeholder2.jpg')",
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    height: '80vh',
-    color: '#fff',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    textAlign: 'center',
-    marginBottom: '4rem'
-  },
-  heroContent: {
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    padding: '2rem',
-    borderRadius: '8px',
-    border: '1px solid #ff5400',
-    maxWidth: '600px',
-    color: 'rgba(255, 255, 255, 0.8)',
-  },
-  heroTitle: {
-    fontSize: '3rem',
-    marginBottom: '1rem'
-  },
-  heroSubtitle: {
-    fontSize: '1.2rem',
-    marginBottom: '1.5rem'
-  },
-  heroButton: {
-    padding: '0.75rem 1.5rem',
-    backgroundColor: '#ff5400',
-    color: '#fff',
-    border: 'none',
-    fontSize: '1rem',
-    borderRadius: '5px',
-    cursor: 'pointer'
-  },
-  featuresSection: {
-    marginBottom: '4rem',
-    textAlign: 'center',
-    color: 'rgba(255, 255, 255, 0.8)',
-  },
-  sectionTitle: {
-    fontSize: '2rem',
-    marginBottom: '2rem',
-    color: 'rgba(255, 255, 255, 0.8)',
-  },
-  featuresGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-    gap: '2rem',
-    maxWidth: '1200px',
-    margin: '0 auto',
-    padding: '0 1rem',
-    color: 'rgba(255, 255, 255, 0.8)',
-  },
-  featureCard: {
-    backgroundColor: '#fff',
-    borderRadius: '8px',
-    padding: '1rem',
-    boxShadow: '0 1px 5px rgba(0,0,0,0.1)',
-    textAlign: 'center',
-    border: '1px solid #ff5400',
-  },
-  featureImage: {
-    width: '80px',
-    marginBottom: '1rem'
-  },
-  featureTitle: {
-    fontSize: '1.2rem',
-    marginBottom: '0.5rem'
-  },
-  featureText: {
-    fontSize: '1rem',
-    color: '#444'
-  },
-  showcaseSection: {
-    display: 'flex',
-    gap: '2rem',
-    alignItems: 'center',
-    marginBottom: '4rem',
-    maxWidth: '1200px',
-    margin: '0 auto',
-    
-    color: 'rgba(255, 255, 255, 0.8)',
-  },
-  showcaseImageContainer: {
-    flex: 1,
-    textAlign: 'center',    
-  },
-  showcaseImage: {
-    width: '100%',
-    maxWidth: '500px',
-    borderRadius: '8px',
-    boxShadow: '0 1px 5px rgba(0,0,0,0.15)'
-  },
-  showcaseContent: {
-    flex: 1,
-    padding: '1rem'
-  },
-  ctaButton: {
-    marginTop: '1rem',
-    padding: '0.75rem 1.5rem',
-    backgroundColor: '#ff5400',
-    color: '#fff',
-    border: 'none',
-    fontSize: '1rem',
-    borderRadius: '5px',
-    cursor: 'pointer'
-  },
-  postsSection: {
-    marginBottom: '4rem',
-    maxWidth: '1200px',
-    margin: '0 auto',
-    padding: '0 1rem',
-   
-  },
-  postsGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-    gap: '1.5rem',
-    marginTop: '2rem'
-  },
-  postCard: {
-    backgroundColor: '#fff',
-    borderRadius: '6px',
-    padding: '1rem',
-    boxShadow: '0 1px 4px rgba(0,0,0,0.1)',
-    border: '1px solid #ff5400',
-  },
-  postTitle: {
-    fontSize: '1.2rem',
-    marginBottom: '0.5rem'
-  },
-  postExcerpt: {
-    fontSize: '1rem',
-    color: '#555',
-    marginBottom: '0.5rem'
-  },
-  postDate: {
-    fontSize: '0.85rem',
-    color: '#999'
-  }
-};

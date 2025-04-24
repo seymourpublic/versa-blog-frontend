@@ -166,7 +166,7 @@ export default function YouthPage() {
     >
       <option value={youthCategory?.id || ""}>All Categories</option>
       {youthCategory?.subcategories?.map((subcat) => (
-        <option key={cat.id} value={subcat.id}>
+        <option key={subcat.id} value={subcat.id}>
           {subcat.name}
         </option>
       ))}
