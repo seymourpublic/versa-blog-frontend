@@ -4,6 +4,9 @@ import { useQuery, gql } from '@apollo/client';
 import Head from 'next/head';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
+//import client from '../../lib/apollo-client';
+import { createApolloClient } from '../../lib/apollo-client';
+
 
 const GET_POST_BY_ID = gql`
   query GetPostById($id: ID!) {
@@ -22,6 +25,56 @@ const GET_POST_BY_ID = gql`
     }
   }
 `;
+
+const client = createApolloClient();
+
+export async function getStaticPaths() {
+  const { data } = await client.query({
+    query: gql`
+      query {
+        posts {
+          id
+        }
+      }
+    `
+  });
+
+  const paths = data.posts.map((post) => ({
+    params: { id: post.id.toString() }
+  }));
+
+  return {
+    paths,
+    fallback: 'blocking',
+  };
+}
+
+export async function getStaticProps({ params }) {
+  try {
+    const { data } = await client.query({
+      query: GET_POST_BY_ID,
+      variables: { id: params.id },
+    });
+
+    if (!data?.post) {
+      return {
+        notFound: true,
+      };
+    }
+
+    return {
+      props: {
+        post: data.post,
+      },
+      revalidate: 10,
+    };
+  } catch (err) {
+    return {
+      notFound: true,
+    };
+  }
+}
+
 
 export default function PostDetail() {
   const router = useRouter();
