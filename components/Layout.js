@@ -39,6 +39,7 @@ const styles = {
     justifyContent: 'space-between',
     alignItems: 'center',
     color: '#fff',
+    flexWrap: 'wrap', // Allows wrapping for smaller screens
   },
   logo: {
     fontSize: '1.8rem',
@@ -47,7 +48,8 @@ const styles = {
   nav: {
     display: 'flex',
     gap: '1.5rem',
-    
+    flexWrap: 'wrap', // Wraps navigation links on smaller screens
+    justifyContent: 'center', // Centers links on smaller screens
   },
   navLink: {
     color: '#fff',
@@ -66,8 +68,20 @@ const styles = {
     textAlign: 'center',
     padding: '1rem',
     fontSize: '0.9rem',
-    textcolor: 'rgba(255, 255, 255, 0.5)',
-    backgroundColor: 'rgba(0, 0, 0, 0.64)',
     color: 'rgba(255, 255, 255, 0.8)',
+    backgroundColor: 'rgba(0, 0, 0, 0.64)',
+  },
+  '@media (max-width: 768px)': { // Media query for devices with width <= 768px
+    header: {
+      flexDirection: 'column',
+      alignItems: 'center',
+    },
+    nav: {
+      flexDirection: 'column',
+      gap: '1rem',
+    },
+    logo: {
+      fontSize: '1.5rem',
+    },
   },
 };
