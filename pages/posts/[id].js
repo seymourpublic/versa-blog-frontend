@@ -185,14 +185,14 @@ export default function PostDetail({ post }) {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto flex flex-col lg:flex-row gap-8 px-4 py-12 text-white">
+      <main className="max-w-4xl mx-auto flex flex-col lg:flex-row gap-12 px-6 py-16 text-white">
         <TableOfContents headings={headings} activeId={activeId} />
-        <article className="prose prose-lg prose-invert max-w-none post-content">
+        <article className="prose prose-lg prose-invert max-w-none post-content text-white">
           <div dangerouslySetInnerHTML={{ __html: html }} />
         </article>
       </main>
 
-      <footer className="border-t py-8 px-4 text-center text-white">
+      <footer className="border-t py-8 px-6 text-center text-white">
         <Link href="/blog" className="hover:underline">← Back to Blog</Link>
       </footer>
     </Layout>

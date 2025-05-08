@@ -243,40 +243,6 @@ const styles = {
     marginTop: '2rem',
   },
 
-  /* Top Nav */
-  topNav: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#0A615F', // Example green shade
-    padding: '1rem 2rem',
-  },
-  logoArea: {
-    fontWeight: 'bold',
-    fontSize: '1.5rem',
-    color: '#fff',
-  },
-  navLinks: {
-    listStyle: 'none',
-    display: 'flex',
-    gap: '1.5rem',
-  },
-  navLink: {
-    color: '#fff',
-    textDecoration: 'none',
-    fontWeight: '500',
-    fontSize: '1rem',
-  },
-  demoButton: {
-    backgroundColor: '#fff',
-    color: '#0A615F',
-    border: 'none',
-    padding: '0.5rem 1rem',
-    borderRadius: '6px',
-    cursor: 'pointer',
-    fontWeight: '600',
-  },
-
   /* Hero Section */
   heroSection: {
     display: 'grid',
@@ -335,8 +301,8 @@ const styles = {
   /* Latest Stories & Search */
   latestStoriesSection: {
     display: 'flex',
+    flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'space-between',
     maxWidth: '1200px',
     margin: '2rem auto',
     padding: '0 2rem',
@@ -344,19 +310,24 @@ const styles = {
   latestStoriesHeadingContainer: {
     flex: '0 0 auto',
     color: 'rgba(255, 255, 255, 0.8)',
+    marginBottom: '1rem',
   },
   latestStoriesHeading: {
     fontSize: '1.8rem',
     fontWeight: '700',
     margin: 0,
+    textAlign: 'center',
   },
   searchBarContainer: {
     display: 'flex',
+    flexDirection: 'column',
     gap: '1rem',
+    width: '100%',
+    maxWidth: '400px',
   },
   searchInput: {
     padding: '0.8rem 1rem',
-    width: '220px',
+    width: '100%',
     border: '1px solid #ddd',
     borderRadius: '6px',
     fontSize: '1rem',
@@ -368,7 +339,7 @@ const styles = {
     borderRadius: '6px',
     fontSize: '1rem',
     backgroundColor: '#fff',
-    width: '180px',
+    width: '100%',
     outline: 'none',
     color: 'rgba(1, 1, 1, 0.8)',
   },
@@ -381,8 +352,8 @@ const styles = {
   },
   postsGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
-    gap: '2rem',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+    gap: '1.5rem',
     marginTop: '2rem',
   },
 
@@ -406,5 +377,25 @@ const styles = {
     backgroundColor: '#0A615F',
     color: '#fff',
     border: '1px solid #0A615F',
+  },
+
+  /* Media Queries */
+  '@media (max-width: 768px)': {
+    heroSection: {
+      gridTemplateColumns: '1fr',
+      textAlign: 'center',
+    },
+    heroTextContainer: {
+      alignItems: 'center',
+    },
+    heroTitle: {
+      fontSize: '2rem',
+    },
+    latestStoriesSection: {
+      alignItems: 'center',
+    },
+    postsGrid: {
+      gridTemplateColumns: '1fr',
+    },
   },
 };
