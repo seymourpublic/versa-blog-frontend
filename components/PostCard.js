@@ -1,65 +1,73 @@
-// components/PostCard.js - Updated with optimized images and CSS modules
+import React, { memo, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import { PostCardImage } from './OptimizedImage';
 import styles from '../styles/PostCard.module.css';
 
-const PostCard = ({ post }) => {
-  // Extract excerpt from content if not provided
-  const excerpt = post.excerpt || 
-    (post.content.length > 120 ? 
-      post.content.substring(0, 120) + '...' : 
-      post.content
-    );
+const PostCard = memo(({ post, priority = false, onReadMore }) => {
+  // Memoize expensive calculations
+  const excerpt = useMemo(() => {
+    return post.excerpt || 
+      (post.content.length > 120 ? 
+        post.content.substring(0, 120) + '...' : 
+        post.content
+      );
+  }, [post.excerpt, post.content]);
 
-  // Format date
-  const formatDate = (dateString) => {
-    try {
-      return new Date(dateString).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      });
-    } catch (error) {
-      return 'Date unavailable';
-    }
-  };
+  const displayDate = useMemo(() => {
+    const formatDate = (dateString) => {
+      try {
+        return new Date(dateString).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+      } catch (error) {
+        return 'Date unavailable';
+      }
+    };
 
-  const displayDate = post.updatedAt ? 
-    formatDate(post.updatedAt) : 
-    (post.publishedAt ? formatDate(post.publishedAt) : '');
+    return post.updatedAt ? 
+      formatDate(post.updatedAt) : 
+      (post.publishedAt ? formatDate(post.publishedAt) : '');
+  }, [post.updatedAt, post.publishedAt]);
 
-  // Generate reading time estimate
-  const estimateReadingTime = (content) => {
+  const readingTime = useMemo(() => {
     const wordsPerMinute = 200;
-    const wordCount = content.trim().split(/\s+/).length;
-    const readingTime = Math.ceil(wordCount / wordsPerMinute);
-    return readingTime;
-  };
+    const wordCount = post.content.trim().split(/\s+/).length;
+    return Math.ceil(wordCount / wordsPerMinute);
+  }, [post.content]);
 
-  const readingTime = estimateReadingTime(post.content);
+  const limitedCategories = useMemo(() => {
+    return post.categories?.slice(0, 2) || [];
+  }, [post.categories]);
+
+  // Memoized click handler
+  const handleReadMore = useCallback((event) => {
+    if (onReadMore) {
+      onReadMore(post.id, event);
+    }
+  }, [onReadMore, post.id]);
 
   return (
     <article className={styles.card}>
-      {/* Post Image */}
       <div className={styles.imageContainer}>
         <PostCardImage
           src={post.imageUrl || '/placeholder.jpg'}
           alt={post.title}
           className={styles.image}
+          priority={priority}
+          loading={priority ? 'eager' : 'lazy'}
         />
         
-        {/* Reading time overlay */}
         <div className={styles.readingTime}>
           {readingTime} min read
         </div>
       </div>
 
-      {/* Post Content */}
       <div className={styles.cardBody}>
-        {/* Categories */}
-        {post.categories && post.categories.length > 0 && (
+        {limitedCategories.length > 0 && (
           <div className={styles.categories}>
-            {post.categories.slice(0, 2).map((category) => (
+            {limitedCategories.map((category) => (
               <span key={category.id} className={styles.categoryTag}>
                 {category.name}
               </span>
@@ -67,7 +75,6 @@ const PostCard = ({ post }) => {
           </div>
         )}
 
-        {/* Title */}
         <h3 className={styles.title}>
           <Link 
             href={`/posts/${post.slug || post.id}`} 
@@ -78,12 +85,8 @@ const PostCard = ({ post }) => {
           </Link>
         </h3>
 
-        {/* Excerpt */}
-        <p className={styles.excerpt}>
-          {excerpt}
-        </p>
+        <p className={styles.excerpt}>{excerpt}</p>
 
-        {/* Meta information */}
         <div className={styles.meta}>
           <time 
             dateTime={post.updatedAt || post.publishedAt}
@@ -99,17 +102,19 @@ const PostCard = ({ post }) => {
           )}
         </div>
 
-        {/* Read more link */}
         <Link 
           href={`/posts/${post.slug || post.id}`} 
           className={styles.readMore}
           aria-label={`Continue reading ${post.title}`}
+          onClick={handleReadMore}
         >
           Read More →
         </Link>
       </div>
     </article>
   );
-};
+});
+
+PostCard.displayName = 'PostCard';
 
 export default PostCard;
