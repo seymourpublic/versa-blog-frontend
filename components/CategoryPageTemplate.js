@@ -205,7 +205,7 @@ const CategoryPageTemplate = ({
               })}
             </p>
             <Link 
-              href={`/posts/${featuredPost.slug || featuredPost.id}`}
+              href={`/posts/${featuredPost.id}`}
               className={styles.readArticleButton}
               aria-label={`Read article: ${featuredPost.title}`}
             >

@@ -77,7 +77,7 @@ const PostCard = memo(({ post, priority = false, onReadMore }) => {
 
         <h3 className={styles.title}>
           <Link 
-            href={`/posts/${post.slug || post.id}`} 
+            href={`/posts/${post.id}`} 
             className={styles.titleLink}
             aria-label={`Read article: ${post.title}`}
           >
@@ -103,7 +103,7 @@ const PostCard = memo(({ post, priority = false, onReadMore }) => {
         </div>
 
         <Link 
-          href={`/posts/${post.slug || post.id}`} 
+          href={`/posts/${post.id}`} 
           className={styles.readMore}
           aria-label={`Continue reading ${post.title}`}
           onClick={handleReadMore}
