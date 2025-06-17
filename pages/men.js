@@ -2,6 +2,7 @@
 import ErrorBoundary from '../components/ErrorBoundary';
 import CategoryPageTemplate from '../components/CategoryPageTemplate';
 
+
 export default function MenPage() {
   return (
     <ErrorBoundary 
